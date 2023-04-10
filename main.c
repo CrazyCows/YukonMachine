@@ -4,10 +4,6 @@
 #include <time.h>
 #include <stdbool.h>
 
-
-void create_node(){
-
-}
 // Each card represent a Node in the linked list
 typedef struct Card{
     // Clubs, diamonds, Hearts, Spades
@@ -18,56 +14,6 @@ typedef struct Card{
     struct Card *next;
     struct Card *previous;
 } Card;
-
-/*
- * To be implemented
- */
-// Creates a card from a given deck.
-Card* createCard(int cardValue, int cardType, Card *next){
-    // *** Following is just an explanation for allocating memory ***
-    /* *card represents the memory location we want to allocate
-     * (Card*) is a type cast. This will convert the pointer from 'void*' to 'Card*'
-     * malloc() allocates a specified amount of bytes.
-     * In our case the amount of bytes we wish to reserve is equal to or a little more than the struct Card()
-     * An estimate of the actual size of Card would be 6 bytes on a 32 bit system and 10 bytes on a 64 bit system.
-     * The two chars each takes up one byte. The pointers size depends on the system. Addresses for 32 bit is 4 bytes and 64 bit is 8 bytes.
-     * Card might be expanded later to also include
-     */
-
-    Card *card = (Card*)malloc(sizeof(Card));
-
-    // Assign the type, C/D/H/S
-    /*
-    if ( == 1){
-        card->cardType = 'C';
-    } else if (i == 2){
-        card->cardType = 'D';
-    } else if (i == 3){
-        card->cardType = 'H';
-    } else if (i == 4){
-        card->cardType = 'S';
-    }
-    if (j == 1){
-        card -> cardValue = 'A';
-    } else if(j < 10){
-        // Converts ASCII int value to char
-        card -> cardValue = j + '0';
-    } else if(j == 10){
-        card -> cardValue = 'S';
-    } else if(j == 11){
-        card -> cardValue = 'Q';
-    } else if(j == 12){
-        card -> cardValue = 'K';
-    }
-    card->next = *head;
-    *head = card;
-     */
-
-
-}
-
-
-
 
 // Creates 52 nodes in a double linked list containing the values given in the assignment if no file is given...
 // Was created to avoid writing 52 cards by hand... 10/10 time sink!
@@ -130,16 +76,59 @@ void createDeck(Card** firstCard, Card** lastCard){
         }
     }
 }
-/** The function loadDeck got quite long as it both loads the data and check for corrections simultaneously
- * The function was not split up for overall readability reasons.
- *
- * @param firstCard
- * @param lastCard
- * @param fileName
- * @param textbuf
- * @return
+/*
+ * controlDeck is used to test if a given card is valid, and if it is a duplicate, and if the list is too short
+ * A known validated deck is used to test if an unknown deck is also correct.
+ * If the unkown deck contains all the values of a validated deck, it must be correct.
+ * The validated deck is searched for a given card of the unknown deck. If the card matches a card in the validated deck, the card will be removed from the validated deck to prevent doubles
+ * If the card does not match a value in the validated deck, it must be an invalid value
  */
-char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char **textbuf){
+bool controlDeck(Card** firstCardTemp, Card** lastCardTemp, Card* currentCardTemp, const char *temp){
+    // Loop going transversing the validated deck
+    while (currentCardTemp != NULL){
+        // Checks if the card is in the validated deck. Temp contains the values of a card from the unknown deck whilst currentCardTemp contains the current value of a card from the validated deck.
+        if (temp[0] == currentCardTemp->cardValue && temp[1] == currentCardTemp->cardType){
+            // If only one card is left in the deck, both the previous and next pointer must be NULL, and we will just free up the last memory
+            if (currentCardTemp->previous == NULL && currentCardTemp->next == NULL){
+                free(currentCardTemp);
+                return true;
+            }
+                // If the card is the first card in the validated deck ("AC" by default), the firstCard pointer must move to the 2. node ("2C" by default)
+            else if (currentCardTemp->previous == NULL){
+                // Move the pointer pointing to the start of the validated deck from first card to second card
+                // (*firstCardTemp) dereferences the pointer such the content in the address can be accessed
+                *firstCardTemp = (*firstCardTemp)->next;
+                // Sets the previous pointer of the second card to be null
+                (*firstCardTemp)->previous = NULL;
+                // Frees the allocated memory from the unlinked card
+                free(currentCardTemp);
+                return true;
+            }
+                // If the card is the last card, the second last card must become the last card.
+                // Exactly same method as previous else-if statement just reversed.
+            else if (currentCardTemp->next == NULL){
+                *lastCardTemp = (*lastCardTemp)->previous;
+                (*lastCardTemp)->next = NULL;
+                free(currentCardTemp);
+                return true;
+            }
+                // If it is not the first card, last card or only card in the validated deck, the pointers in the surrounding cards is moved such they are now linked, and the current card gets deleted.
+            else {
+                (currentCardTemp->next)->previous = currentCardTemp->previous;
+                (currentCardTemp->previous)->next = currentCardTemp->next;
+                free(currentCardTemp);
+                return true;
+            }
+        }
+        // Goes to the next card in the validated deck if no match is found
+        currentCardTemp = currentCardTemp->next;
+    }return false;
+
+}
+/*
+ * loadDeck is used to load a deck from a txt file. Uses ControlDeck to validate the loaded deck.
+ */
+char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char *textbuf){
     if (fileName == NULL || fileName == ""){
         createDeck(firstCard, lastCard);
         return "OK, deck created";
@@ -148,50 +137,25 @@ char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char **t
     if (file == NULL){
         return "Invalid file path";
     }
-
+    // Creates a linked list containing all 52 cards. Is used to check against the imported card deck.
     Card* firstCardTemp = NULL;
     Card* lastCardTemp = NULL;
     createDeck(&firstCardTemp, &lastCardTemp);
 
+    // Temp is created for fgets. Contains details of one card.
     char temp[2];
-    for (int i = 1; i <= 53; i++){
-        bool charFound = false;
+    for (int i = 1; i <= 52; i++){
+        // fgets reads a line from a txt file and saves it in temp. The int defines the max-count of chars on a line. Is set to 4 as it also includes \n
         fgets(temp, 4, file);
+        // Resets the currentCardTemp to start at the fron every loop
         Card* currentCardTemp = firstCardTemp;
-        while (currentCardTemp != NULL){
-            if (temp[0] == currentCardTemp->cardValue && temp[1] == currentCardTemp->cardType){
-                charFound = true;
-                if (currentCardTemp->previous == NULL && currentCardTemp->next == NULL){
-                    break;
-                }
-                // If it is the first card in the linked list ("AC"), the firstCard pointer must move to the 2. node
-                else if (currentCardTemp->previous == NULL){
-                    firstCardTemp = firstCardTemp->next;
-                    firstCardTemp->previous = NULL;
-                    // Frees the allocated memory from the unlinked card
-                    free(currentCardTemp);
-                    break;
-                }
-                    // If the card is the last card, the second last card must become the last card. Pointer moves
-                else if (currentCardTemp->next == NULL){
-                    lastCardTemp = lastCardTemp->previous;
-                    lastCardTemp->next = NULL;
-                    free(currentCardTemp);
-                    break;
-                }
-                    // If it is not the first card in the list, the pointers in the
-                else {
-                    (currentCardTemp->next)->previous = currentCardTemp->previous;
-                    (currentCardTemp->previous)->next = currentCardTemp->next;
-                    free(currentCardTemp);
-                    break;
-                }
-            }
-            currentCardTemp = currentCardTemp->next;
-        }
 
-        if (charFound == false){
-            snprintf((char *) textbuf, 100, "Error at line: %d", i);
+        // Tests if a given card is valid. Also checks for doubles and if the txt file contains less than 52 cards
+        // if the txt file contains more than 52 cards, no error will be given if the first 52 data entries is legit
+        if (controlDeck(&firstCardTemp, &lastCardTemp, currentCardTemp, temp) == false){
+            //snprintf is used to append the line of error to the string.
+            // textbuf is saved in main to eliminate memory issues
+            snprintf(textbuf, 100, "Error at line: %d", i);
             return textbuf;
         }
 
@@ -217,45 +181,9 @@ char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char **t
         *lastCard = newCard;
     }
 
-
     fclose(file);
     return "OK, file loaded";
 }
-
-bool controlDeck(Card* currentCardTemp, Card** firstCardTemp, Card** lastCardTemp, const char *temp){
-    while (currentCardTemp != NULL){
-        if (temp[0] == currentCardTemp->cardValue && temp[1] == currentCardTemp->cardType){
-            if (currentCardTemp->previous == NULL && currentCardTemp->next == NULL){
-                return true;
-            }
-                // If it is the first card in the linked list ("AC"), the firstCard pointer must move to the 2. node
-            else if (currentCardTemp->previous == NULL){
-                firstCardTemp = (*firstCardTemp)->next;
-                (*firstCardTemp)->previous = NULL;
-                // Frees the allocated memory from the unlinked card
-                free(currentCardTemp);
-                return true;
-            }
-                // If the card is the last card, the second last card must become the last card. Pointer moves
-            else if (currentCardTemp->next == NULL){
-                lastCardTemp = (*lastCardTemp)->previous;
-                (*lastCardTemp)->next = NULL;
-                free(currentCardTemp);
-                return true;
-            }
-                // If it is not the first card in the list, the pointers in the
-            else {
-                (currentCardTemp->next)->previous = currentCardTemp->previous;
-                (currentCardTemp->previous)->next = currentCardTemp->next;
-                free(currentCardTemp);
-                return true;
-            }
-        }
-        currentCardTemp = currentCardTemp->next;
-    }return false;
-
-}
-
 
 // Reads the current deck and saves it
 // As we only want to read the content from the linked list we point to the content of Card
@@ -285,15 +213,110 @@ char *saveDeck(Card* firstCard, const char *savedDeckName){
     fclose(file);
     return "Success! File saved.";
 }
+// Just a simple print method. No fancy stuff.
+void showCards(Card* firstCard){
+    // upper row
+    printf("C1\tC2\tC3\tC4\tC5\tC6\tC7\n\n");
+    Card* currentCard = firstCard;
+    int counter = 0;
+    // Prints all da cards
+    while (currentCard != NULL){
+        if (counter%7 == 0){
+            if (counter != 0){
+                printf("\n");
+            }
 
+        }
+        // Prints the value of the card
+        printf("%c%c\t", currentCard->cardValue, currentCard->cardType);
+        // At the end of the first 4 lines F# is added
+        if (counter == 6 ){
+            printf("\t[]\tF1");
+        } else if (counter == 13){
+            printf("\t[]\tF2");
+        } else if (counter == 20){
+            printf("\t[]\tF1");
+        } else if (counter == 27){
+            printf("\t[]\tF1");
+        }
+        // Next card and increases counter
+        currentCard = currentCard->next;
+        counter++;
+    }
+    printf("\nMessage:\nInput:");
+}
+
+// Splitshuffle according to assignemnet. Nothing fancy
+void splitShuffle(Card** firstCard, Card** lastCard){
+    Card* currentCard = *firstCard;
+    // Creates a random number. rand() in c must be provided a seed, otherwise the same random sequence will happen everytime, and as such very quickly become predictable
+    // Using the current time as seed.
+    time_t currentTime = time(NULL);
+    srand(currentTime);
+    int randomNumber = rand() % 52;
+    for (int i = 0; i < randomNumber; i++){
+        currentCard = currentCard->next;
+    }
+
+    // Creates the piles
+    Card* pile1 = *firstCard;
+    Card* pile2 = currentCard->next;
+    Card* pile3 = NULL;
+
+    (currentCard->next)->previous = NULL;
+    currentCard->next = NULL;
+
+    // As we always start with pile1, the last card in pile 3 is always the first card in pile1
+    // There's two scenarios for the last card in the deck to take into account. (If the first pile is the biggest) and (if the cards is split evenly, or the second pile is the biggest.
+    // If the pile1 is bigger than the second pile2, the last card in the first pile becomes the first card in pile 3
+    // If pile2 is bigger than or equal to pile3, the last card of the original deck becomes the first card in pile 3
+    pile3->next = NULL;
+    pile3->previous = pile2;
+    // Stops before the last card is reached in whatever pile is smallest and handles the last card seperately as with the first card
+    while(pile1->next != NULL && pile2->next != NULL){
+        // checks for next pointer null to see if end is reached
+        if (pile1->next != NULL){
+            pile3->next = pile1->next;
+            pile3->previous = pile1->next;
+            pile1 = pile1->next;
+            pile3 = pile3->next;
+        }
+        if (pile2->next != NULL){
+            pile3->next = pile2->next;
+            pile3->previous = pile2->previous;
+            pile2 = pile2->next;
+            pile3 = pile3->next;
+        }
+    }
+    // write code which will take the last
+    if (randomNumber < 26){
+
+    }
+
+
+    currentCard->next;
+
+
+
+}
+
+/*
+ * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
+ */
 int main(){
     /*
      * Essentially we are creating an object of type Card and do stuff with it
      */
 
-    char *errorMessages[100];
+    char errorMessages[100];
 
-
+    // Time test.. should be deleted
+    /*
+    time_t currentTime = time(NULL);
+    srand(currentTime);
+    int tempint = rand() % 52;
+    printf("\n\n%d\n\n", tempint);
+     */
 
     // Declares starting address of firstCard
     // -------- Explain why firscard must be an object of card, and why we initialize at NULL. Also explain why we want to pass the address of operate (&) to optain the pointers address.
@@ -312,15 +335,17 @@ int main(){
     // just for testing.. Prints the current deck
 
     printf("\n");
-    if (firstCard != NULL){
+    if (current != NULL){
         while (current != NULL){
             printf("%c%c\n", current->cardValue, current->cardType);
             current = current->next;
         }
     }
+    printf("\n\n");
+    showCards(firstCard);
 
 
-    printf("\nCode finished succesfully");
+    printf("\nCode finished succesfully(maybe not succesfully, it did finish though..)");
     return 1;
 }
 
