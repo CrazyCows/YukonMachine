@@ -283,7 +283,7 @@ void splitShuffle(Card** firstCard, Card** lastCard){
             }
         }
         if (pile2 != NULL){
-            if (pile2->next != NULL) {
+            if (pile2 != NULL) {
                 currentCard = pile2->next;
                 pile2->next = pile3;
                 pile3 = pile2;
