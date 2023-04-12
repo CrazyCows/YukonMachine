@@ -229,15 +229,15 @@ void showCards(Card* firstCard){
         }
         // Prints the value of the card
         printf("%c%c\t", currentCard->cardValue, currentCard->cardType);
-        // At the end of the first 4 lines F# is added
+        // At the end of the every 2. line F# is added
         if (counter == 6 ){
             printf("\t[]\tF1");
-        } else if (counter == 13){
-            printf("\t[]\tF2");
         } else if (counter == 20){
-            printf("\t[]\tF1");
-        } else if (counter == 27){
-            printf("\t[]\tF1");
+            printf("\t[]\tF2");
+        } else if (counter == 34){
+            printf("\t[]\tF3");
+        } else if (counter == 48){
+            printf("\t[]\tF4");
         }
         // Next card and increases counter
         currentCard = currentCard->next;
@@ -246,14 +246,15 @@ void showCards(Card* firstCard){
     printf("\nMessage:\nInput:");
 }
 
-// Splitshuffle according to assignemnet. Nothing fancy
+// Splitshuffle according to assignemnet. Lots of pointer stuff -_-
 void splitShuffle(Card** firstCard, Card** lastCard){
     Card* currentCard = *firstCard;
     // Creates a random number. rand() in c must be provided a seed, otherwise the same random sequence will happen everytime, and as such very quickly become predictable
     // Using the current time as seed.
     time_t currentTime = time(NULL);
     srand(currentTime);
-    int randomNumber = rand() % 52;
+    int randomNumber = rand() % (52 - 1 + 1) + 1;
+    randomNumber = 28;
     for (int i = 0; i < randomNumber; i++){
         currentCard = currentCard->next;
     }
@@ -263,42 +264,77 @@ void splitShuffle(Card** firstCard, Card** lastCard){
     Card* pile2 = currentCard->next;
     Card* pile3 = NULL;
 
-    (currentCard->next)->previous = NULL;
+    // splits the list into 2
+    currentCard->next->previous = NULL;
     currentCard->next = NULL;
+    currentCard = NULL; // Reset should not be necessary but done just to be sure...
+    while(pile1 != NULL && pile2 != NULL){
+        if (pile1 != NULL){
+            if (pile1->previous != NULL){
+                currentCard = pile1->next;
+                pile1->next = pile3;
+                pile3 = pile1;
+                pile1 = currentCard;
+            } else if (pile1->previous == NULL) {
+                currentCard = pile1->next;
+                pile1->next = NULL;
+                pile3 = pile1;
+                pile1 = currentCard;
+            }
+        }
+        if (pile2 != NULL){
+            if (pile2->next != NULL) {
+                currentCard = pile2->next;
+                pile2->next = pile3;
+                pile3 = pile2;
+                pile2 = currentCard;
+            }
+        }
+    }
 
-    // As we always start with pile1, the last card in pile 3 is always the first card in pile1
-    // There's two scenarios for the last card in the deck to take into account. (If the first pile is the biggest) and (if the cards is split evenly, or the second pile is the biggest.
-    // If the pile1 is bigger than the second pile2, the last card in the first pile becomes the first card in pile 3
-    // If pile2 is bigger than or equal to pile3, the last card of the original deck becomes the first card in pile 3
-    pile3->next = NULL;
-    pile3->previous = pile2;
-    // Stops before the last card is reached in whatever pile is smallest and handles the last card seperately as with the first card
-    while(pile1->next != NULL && pile2->next != NULL){
-        // checks for next pointer null to see if end is reached
-        if (pile1->next != NULL){
-            pile3->next = pile1->next;
-            pile3->previous = pile1->next;
+    pile3 -> previous = NULL;
+    *firstCard = pile3;
+
+    while (pile3->next != NULL){
+        pile3 = pile3->next;
+    }
+
+    if ((randomNumber) > 26){
+        while (pile1->next != NULL){
+            pile3->next = pile1;
+            pile3 = pile3->next;
             pile1 = pile1->next;
-            pile3 = pile3->next;
         }
-        if (pile2->next != NULL){
-            pile3->next = pile2->next;
-            pile3->previous = pile2->previous;
+        pile3->next = NULL;
+        *lastCard = pile3;
+    } else {
+        while (pile2->next != NULL) {
+            pile3->next = pile2;
+            pile3 = pile3->next;
             pile2 = pile2->next;
-            pile3 = pile3->next;
         }
-    }
-    // write code which will take the last
-    if (randomNumber < 26){
-
+        pile3->next = NULL;
+        *lastCard = pile3;
     }
 
+    currentCard = *firstCard;
+    Card* prevCard = currentCard;
+    currentCard = currentCard->next;
+    while (currentCard != NULL){
+        currentCard->previous = prevCard;
+        currentCard = currentCard->next;
+        prevCard = prevCard->next;
+    }
 
-    currentCard->next;
+    currentCard = *firstCard;
 
-
-
+    printf("\n\n Doing what u think im doing");
+    while (currentCard != NULL){
+        printf("\n%c%c\n", currentCard->cardValue, currentCard->cardType);
+        currentCard = currentCard->next;
+    }
 }
+
 
 /*
  * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
@@ -342,6 +378,7 @@ int main(){
         }
     }
     printf("\n\n");
+    splitShuffle(&firstCard, &lastCard);
     showCards(firstCard);
 
 
