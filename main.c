@@ -254,8 +254,8 @@ void splitShuffle(Card** firstCard, Card** lastCard){
     time_t currentTime = time(NULL);
     srand(currentTime);
     int randomNumber = rand() % (52 - 1 + 1) + 1;
-    randomNumber = 28;
-    for (int i = 0; i < randomNumber; i++){
+    randomNumber = 13;
+    for (int i = 1; i <= randomNumber; i++){
         currentCard = currentCard->next;
     }
 
@@ -300,7 +300,7 @@ void splitShuffle(Card** firstCard, Card** lastCard){
     }
 
     if ((randomNumber) > 26){
-        while (pile1->next != NULL){
+        while (pile1 != NULL){
             pile3->next = pile1;
             pile3 = pile3->next;
             pile1 = pile1->next;
@@ -308,7 +308,7 @@ void splitShuffle(Card** firstCard, Card** lastCard){
         pile3->next = NULL;
         *lastCard = pile3;
     } else {
-        while (pile2->next != NULL) {
+        while (pile2 != NULL) {
             pile3->next = pile2;
             pile3 = pile3->next;
             pile2 = pile2->next;
@@ -335,6 +335,67 @@ void splitShuffle(Card** firstCard, Card** lastCard){
     }
 }
 
+void shuffle(Card** firstCard, Card** lastCard){
+    Card* pile1 = *firstCard;
+    Card* pile2;
+    Card* currentCard = pile1;
+    int cardsInPile2 = 1; // first card gets used before the loop
+    Card* prevCard;
+    // First card is a special case and would just complicate things in the loop
+    pile2 = pile1;
+    pile1 = pile1->next;
+    pile2->next = NULL;
+    pile2->previous = NULL;
+    time_t currentTime = time(NULL);
+    srand(currentTime);
+    Card* temp;
+    int randomNumber = rand() % cardsInPile2;
+    //int randomNumber = 1;
+    while (pile1 != NULL){
+        cardsInPile2++;
+        randomNumber = rand() % cardsInPile2;
+        if (randomNumber == 0){
+            prevCard = pile2->previous;
+            currentCard = pile2;
+        } else {
+            for (int i = 0; i < randomNumber; i++) {
+                prevCard = pile2;
+                currentCard = pile2->next;
+            }
+        }
+        if (currentCard == NULL){
+            prevCard->next = pile1;
+            pile1 = pile1->next;
+            currentCard = prevCard->next;
+            currentCard->previous = prevCard;
+            currentCard->next = NULL;
+        } else if (currentCard->previous == NULL){
+            currentCard->previous = pile1;
+            pile1 = pile1->next;
+            prevCard = currentCard->previous;
+            prevCard->next = pile2;
+            prevCard->previous = NULL;
+            pile2 = prevCard;
+        } else {
+            prevCard->next = pile1;
+            currentCard->previous = pile1;
+            temp = pile1;
+            pile1 = pile1->next;
+            temp->next = currentCard;
+            temp->previous = prevCard;
+
+        }
+        currentCard = pile2;
+    }
+    *firstCard = pile2;
+    while (pile2->next != NULL){
+        pile2 = pile2->next;
+    }
+    *lastCard = pile2;
+    printf("noise");
+
+
+}
 
 /*
  * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
@@ -361,9 +422,11 @@ int main(){
     Card* lastCard = NULL;
     // Gives the address to createDeck. firstCard will change accordingly and will no longer be empty
     //createDeck(&firstCard, &lastCard);
-
     printf("%s", loadDeck(&firstCard, &lastCard, "savedDeck.txt", errorMessages));
     Card* current = firstCard;
+
+    shuffle(&firstCard, &lastCard);
+
     // Prints, for testing
     //char *str = saveDeck(firstCard, "");
     //printf("%s\n", str);
@@ -378,7 +441,7 @@ int main(){
         }
     }
     printf("\n\n");
-    splitShuffle(&firstCard, &lastCard);
+    //splitShuffle(&firstCard, &lastCard);
     showCards(firstCard);
 
 
