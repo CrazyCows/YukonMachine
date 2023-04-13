@@ -341,6 +341,7 @@ void shuffle(Card** firstCard, Card** lastCard){
     Card* currentCard = pile1;
     int cardsInPile2 = 1; // first card gets used before the loop
     Card* prevCard;
+    Card* temp; // Can be removed, but makes life easier
     // First card is a special case and would just complicate things in the loop
     pile2 = pile1;
     pile1 = pile1->next;
@@ -348,27 +349,32 @@ void shuffle(Card** firstCard, Card** lastCard){
     pile2->previous = NULL;
     time_t currentTime = time(NULL);
     srand(currentTime);
-    Card* temp;
     int randomNumber = rand() % cardsInPile2;
     //int randomNumber = 1;
     while (pile1 != NULL){
+        // Randomizes where the next card should be put in the pile.
         cardsInPile2++;
         randomNumber = rand() % cardsInPile2;
+        // 0 is taken as a special case to make things easier
         if (randomNumber == 0){
             prevCard = pile2->previous;
             currentCard = pile2;
         } else {
+            // All other positions in pile2 is treated equally
             for (int i = 0; i < randomNumber; i++) {
                 prevCard = pile2;
                 currentCard = pile2->next;
             }
         }
+        // Pointer stuff.
+        // If currentCard is null, it must be the very last card in the deck
         if (currentCard == NULL){
             prevCard->next = pile1;
             pile1 = pile1->next;
             currentCard = prevCard->next;
             currentCard->previous = prevCard;
             currentCard->next = NULL;
+            // If currecCard->previous is NULL, it must be the very first card in the deck
         } else if (currentCard->previous == NULL){
             currentCard->previous = pile1;
             pile1 = pile1->next;
@@ -376,6 +382,7 @@ void shuffle(Card** firstCard, Card** lastCard){
             prevCard->next = pile2;
             prevCard->previous = NULL;
             pile2 = prevCard;
+            // If it is not the first and neither the last card, it must be a normal card in the deck sorrounded by other cards
         } else {
             prevCard->next = pile1;
             currentCard->previous = pile1;
@@ -387,6 +394,7 @@ void shuffle(Card** firstCard, Card** lastCard){
         }
         currentCard = pile2;
     }
+    // Updates the pointers in main()
     *firstCard = pile2;
     while (pile2->next != NULL){
         pile2 = pile2->next;
