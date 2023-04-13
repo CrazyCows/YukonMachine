@@ -408,6 +408,11 @@ void shuffle(Card** firstCard, Card** lastCard){
 /*
  * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
  */
+
+void play(Card** firstCard, Card** lastCard){
+
+}
+
 int main(){
     /*
      * Essentially we are creating an object of type Card and do stuff with it
