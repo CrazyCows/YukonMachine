@@ -13,6 +13,7 @@ typedef struct Card{
     // Loads the next and previous memory location for sorrounding cards
     struct Card *next;
     struct Card *previous;
+    bool flipped;
 } Card;
 
 // Creates 52 nodes in a double linked list containing the values given in the assignment if no file is given...
@@ -32,6 +33,7 @@ void createDeck(Card** firstCard, Card** lastCard){
              * Card might be expanded to a double linked list at which point its size increase to 10 or 16 bytes.
              */
             Card* newCard = (Card*)malloc(sizeof(Card));
+            newCard->flipped = false; // Might be bad
             // Assign the type, C/D/H/S
             if (i == 1){
                 newCard->cardType = 'C';
@@ -143,6 +145,7 @@ char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char *te
     createDeck(&firstCardTemp, &lastCardTemp);
 
     // Temp is created for fgets. Contains details of one card.
+    // Should be made into a while statement..... lazy.
     char temp[2];
     for (int i = 1; i <= 52; i++){
         // fgets reads a line from a txt file and saves it in temp. The int defines the max-count of chars on a line. Is set to 4 as it also includes \n
@@ -160,6 +163,7 @@ char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char *te
         }
 
         Card* newCard = (Card*)malloc(sizeof(Card));
+        newCard->flipped = false; // Might be bad
         // Stores the loaded data in a newly created Card;
         newCard->cardValue = temp[0];
         newCard->cardType = temp[1];
@@ -355,6 +359,7 @@ void shuffle(Card** firstCard, Card** lastCard){
         // Randomizes where the next card should be put in the pile.
         cardsInPile2++;
         randomNumber = rand() % cardsInPile2;
+
         // 0 is taken as a special case to make things easier
         if (randomNumber == 0){
             prevCard = pile2->previous;
@@ -409,7 +414,69 @@ void shuffle(Card** firstCard, Card** lastCard){
  * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
  */
 
+/**
+ *
+ * @param piledToAdd The pile which a card should be added to
+ * @param tempCard current card from the old pile
+ */
+void insertCard(Card ** pileToAdd, Card** oldPile) {
+    Card *pileToAddTemp = *pileToAdd;
+    Card *oldPileTemp = *oldPile;
+
+    pileToAddTemp = oldPileTemp;
+    oldPileTemp = oldPileTemp->next;
+
+
+
+}
+
+
 void play(Card** firstCard, Card** lastCard){
+    // The card is split into 7 columns
+    Card* c1, c2, c3, c4, c5, c6, c7;
+    int sizes[] = {0,0, 0, 0, 0, 0, 0,};
+    // 4 additional lists is made for finished cards
+    Card* f1, f2, f3, f4;
+    Card* currentCard = *firstCard;
+
+    while (currentCard != NULL){
+        if (sizes[0] == 0){
+            c1 = currentCard;
+            currentCard = currentCard->next;
+            c1->previous = NULL;
+            c1->next = NULL;
+        }
+        if (sizes[1] < 6){
+            // place cards, first card flipped
+
+            if (currentCard->previous == NULL){
+                c1 = currentCard;
+                currentCard = currentCard->next;
+
+            }
+
+            if (sizes[1] < 1){
+
+            }
+        }
+        if (sizes[2] < 7){
+            // Place cards, 2 card flipped
+        }
+        if (sizes[3] < 8){
+            // place cards, 3 card flipped
+        }
+        if (sizes[4] < 9){
+            // place cards, 4 cards flipped
+        }
+        if (sizes[5] < 10){
+            // place cards, 5 cards flipped
+        }
+        if (sizes[6] < 8){
+            // place cards, 3 cards flipped
+        }
+
+    }
+
 
 }
 
@@ -434,11 +501,11 @@ int main(){
     Card* firstCard = NULL;
     Card* lastCard = NULL;
     // Gives the address to createDeck. firstCard will change accordingly and will no longer be empty
-    //createDeck(&firstCard, &lastCard);
+    createDeck(&firstCard, &lastCard);
     printf("%s", loadDeck(&firstCard, &lastCard, "savedDeck.txt", errorMessages));
     Card* current = firstCard;
 
-    shuffle(&firstCard, &lastCard);
+    //shuffle(&firstCard, &lastCard);
 
     // Prints, for testing
     //char *str = saveDeck(firstCard, "");
