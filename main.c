@@ -691,33 +691,70 @@ bool moveCards(Card** fromPile, Card** toPile, int from){
     }
 */
     // Save the card you want to move into a temp Card* - other functions use 'Card* currentCard'
-    Card* cardsToPlace = *fromPile;
-
-
-    Card* toPileEndCard = toPile[0];
-    while (toPileEndCard->next != NULL){
-        toPileEndCard = toPileEndCard->next;
-    }
-
-
-    printf("\n\n%c%c\n\n", toPileEndCard->cardValue, toPileEndCard->cardType);
-    //printf("\n\n%c%c\n\n", toPileEndCard->cardValue, toPileEndCard->cardType);
-
-    while (cardsToPlace != NULL) {
-        Card* nextCard = cardsToPlace->next;
-        toPileEndCard->next = cardsToPlace;
-        cardsToPlace->previous = toPileEndCard;
-        toPileEndCard = cardsToPlace;
-        cardsToPlace = nextCard;
+    Card* temp = *fromPile;
+    Card* oldPile = *fromPile;
+    Card* newPile = *toPile;
+/*
+    for (int i = 0; i < from; i++){
         *fromPile = (*fromPile)->next;
     }
 
+    while ((*toPile)->next != NULL){
+        *toPile = (*toPile)->next;
+    }
+    */
+
+
+    printf("\n\n%c%c\n\n", (*toPile)->cardValue, (*toPile)->cardType);
+    //printf("\n\n%c%c\n\n", toPileEndCard->cardValue, toPileEndCard->cardType);
+
+    for (int i = 0; i < from; i++){
+        oldPile = oldPile->next;
+        if (oldPile == NULL){
+            return false;
+        }
+    }
+
+    while (newPile->next != NULL){
+        newPile = newPile->next;
+    }
+
+    Card* cardToMove = oldPile;
+
+    oldPile = oldPile->previous;
+    oldPile->next = NULL;
+
+    newPile->next = cardToMove;
+    newPile = newPile->next;
+
+
+
+
+
+/*
+    while ((*fromPile) != NULL) {
+        Card* nextCard = (*fromPile)->next;
+        (*toPile)->next = (*fromPile);
+        (*fromPile)->previous = (*toPile);
+        (*toPile) = (*fromPile);
+        (*fromPile) = nextCard;
+        *fromPile = (*fromPile)->next;
+    }
+
+    (*fromPile)->next = NULL;
+    */
+/*
     if (*fromPile != NULL) {
         if ((*fromPile)->previous != NULL) {
             (*fromPile)->previous->next = NULL;
         }
         *fromPile = NULL;
     }
+    */
+
+
+
+    *fromPile = temp;
 
     // Remove the card from the pile the card is coming from
 
