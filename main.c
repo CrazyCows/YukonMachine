@@ -573,43 +573,71 @@ void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c
     int lineCounter = 0;
     while (c1 != NULL || c2 != NULL || c3 != NULL || c4 != NULL || c5 != NULL || c6 != NULL || c7 != NULL){
         if (c1 != NULL){
-            printf("%c%c\t", c1->cardValue, c1->cardType);
+            if (c1->flipped == true){
+                printf("[]\t");
+            } else {
+                printf("%c%c\t", c1->cardValue, c1->cardType);
+            }
             c1 = c1->next;
         } else {
             printf("\t");
         }
         if (c2 != NULL){
-            printf("%c%c\t", c2->cardValue, c2->cardType);
+            if (c2->flipped == true){
+                printf("[]\t");
+            } else {
+                printf("%c%c\t", c2->cardValue, c2->cardType);
+            }
             c2 = c2->next;
         }else {
             printf("\t");
         }
         if (c3 != NULL){
-            printf("%c%c\t", c3->cardValue, c3->cardType);
+            if (c3->flipped == true){
+                printf("[]\t");
+            } else {
+                printf("%c%c\t", c3->cardValue, c3->cardType);
+            }
             c3 = c3->next;
         }else {
             printf("\t");
         }
         if (c4 != NULL){
-            printf("%c%c\t", c4->cardValue, c4->cardType);
+            if (c4->flipped == true){
+                printf("[]\t");
+            } else {
+                printf("%c%c\t", c4->cardValue, c4->cardType);
+            }
             c4 = c4->next;
         }else {
             printf("\t");
         }
         if (c5 != NULL){
-            printf("%c%c\t", c5->cardValue, c5->cardType);
+            if (c5->flipped == true){
+                printf("[]\t");
+            } else {
+                printf("%c%c\t", c5->cardValue, c5->cardType);
+            }
             c5 = c5->next;
         }else {
             printf("\t");
         }
         if (c6 != NULL){
-            printf("%c%c\t", c6->cardValue, c6->cardType);
+            if (c6->flipped == true){
+                printf("[]\t");
+            } else {
+                printf("%c%c\t", c6->cardValue, c6->cardType);
+            }
             c6 = c6->next;
         }else {
             printf("\t");
         }
         if (c7 != NULL){
-            printf("%c%c", c7->cardValue, c7->cardType);
+            if (c7->flipped == true){
+                printf("[]\t");
+            } else {
+                printf("%c%c\t", c7->cardValue, c7->cardType);
+            }
             c7 = c7->next;
         }else {
             printf("\t");
@@ -654,14 +682,8 @@ void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c
 bool checkLegalMove(Card** fromPile, Card** toPile, int from) {
 
     Card* firstCard = fromPile[0];
-    for (int i = 0; i < from; i ++) {
-        firstCard = firstCard->next;
-    }
-
     Card* secondCard = toPile[0];
-    while (secondCard->next != NULL) {
-        secondCard = secondCard->next;
-    }
+
 
     printf("\n\n%c%c\n", firstCard->cardValue, firstCard->cardType);
     printf("%c%c\n\n", secondCard->cardValue, secondCard->cardType);
@@ -683,14 +705,8 @@ bool checkLegalMove(Card** fromPile, Card** toPile, int from) {
 
 bool checkLegalMove2(Card** fromPile, Card** toPile, int from){
     Card* firstCard = fromPile[0];
-    for (int i = 0; i < from; i ++) {
-        firstCard = firstCard->next;
-    }
-
     Card* secondCard = toPile[0];
-    while (secondCard->next != NULL) {
-        secondCard = secondCard->next;
-    }
+
 
     printf("\n\n%c%c\n", firstCard->cardValue, firstCard->cardType);
     printf("%c%c\n\n", secondCard->cardValue, secondCard->cardType);
@@ -706,41 +722,49 @@ bool checkLegalMove2(Card** fromPile, Card** toPile, int from){
 
 // Assignment
 bool moveCards(Card** fromPile, Card** toPile, int from, bool endPile){
+    Card* temp = *fromPile;
+    Card* temp2 = *toPile;
+    for (int i = 0; i < from; i ++) {
+        (*fromPile) = (*fromPile)->next;
+    }
+    while ((*toPile)->next != NULL) {
+        (*toPile) = (*toPile)->next;
+    }
+
+    if (*fromPile == NULL || *toPile == NULL){
+        *fromPile = temp;
+        *toPile = temp2;
+        return false;
+    }
+
+    if ((*fromPile)->flipped){
+        *fromPile = temp;
+        *toPile = temp2;
+        return false;
+    }
 
     if (!endPile) {
         if (!checkLegalMove(fromPile, toPile, from)) {
             printf("\nIllegal move!\n");
+            *fromPile = temp;
+            *toPile = temp2;
             return false;
         }
     } else{
         if (!checkLegalMove2(fromPile, toPile, from)) {
             printf("\nIllegal move!\n");
+            *fromPile = temp;
+            *toPile = temp2;
             return false;
         }
     }
 
-    Card* temp = *fromPile;
-    Card* temp2 = *toPile;
     Card* oldPile = *fromPile;
     Card* newPile = *toPile;
 
-
-
     printf("\n\n%c%c\n\n", (*toPile)->cardValue, (*toPile)->cardType);
-    //printf("\n\n%c%c\n\n", toPileEndCard->cardValue, toPileEndCard->cardType);
-
-    for (int i = 0; i < from; i++){
-        oldPile = oldPile->next;
-        if (oldPile == NULL){
-            return false;
-        }
-    }
 
     Card* cardToMove = oldPile;
-
-    while (newPile->next != NULL){
-        newPile = newPile->next;
-    }
 
     oldPile = oldPile->previous;
     oldPile->next = NULL;
