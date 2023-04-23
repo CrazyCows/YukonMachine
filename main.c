@@ -768,6 +768,7 @@ int main(){
     moveCard(&c1, &c2, 1);
 
 
+
     printCurrentBoard(c1, c2, c3, c4, c5, c6, c7);
 
 
