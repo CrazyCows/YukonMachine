@@ -692,6 +692,7 @@ bool moveCards(Card** fromPile, Card** toPile, int from){
 */
     // Save the card you want to move into a temp Card* - other functions use 'Card* currentCard'
     Card* temp = *fromPile;
+    Card* temp2 = toPile;
     Card* oldPile = *fromPile;
     Card* newPile = *toPile;
 /*
@@ -755,6 +756,7 @@ bool moveCards(Card** fromPile, Card** toPile, int from){
 
 
     *fromPile = temp;
+    *toPile = temp2;
 
     // Remove the card from the pile the card is coming from
 
