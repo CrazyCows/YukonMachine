@@ -661,6 +661,10 @@ void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c
         printf("\t\t\t\t\t\t\tF4\n");
     }
 
+    printf("\n");
+    printf("Status message: \n");
+    printf("Input: \n");
+
 
 
 
