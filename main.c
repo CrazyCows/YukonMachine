@@ -410,25 +410,87 @@ void shuffle(Card** firstCard, Card** lastCard){
 
 }
 
-/*
- * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
- */
 
 /**
  *
  * @param piledToAdd The pile which a card should be added to
  * @param tempCard current card from the old pile
  */
-void insertCard(Card ** pileToAdd, Card** oldPile) {
-    Card *pileToAddTemp = *pileToAdd;
-    Card *oldPileTemp = *oldPile;
-
-    pileToAddTemp = oldPileTemp;
-    oldPileTemp = oldPileTemp->next;
+void insertCard(Card** newPile, Card** oldPile) {
 
 
 
+    Card *cardToMove = *oldPile;
+
+    // Remove the card from the old pile
+
+    (*oldPile) = (*oldPile)->next;
+    if (*oldPile != NULL){
+        (*oldPile)->previous = NULL;
+    }
+
+    cardToMove->next = NULL;
+    cardToMove->previous = NULL;
+
+    if (*newPile == NULL){
+        *newPile = cardToMove;
+    } else {
+        Card *temp = *newPile;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = cardToMove;
+        cardToMove->previous = temp;
+    }
+
+// Old code - not tested
+/*
+    Card *newPile1 = *newPile;
+    Card *newPile2;
+    Card *oldPile1 = oldPile;
+    Card *oldPile2;
+        // No cards in pile
+    if (*newPile == NULL){
+        newPile1 = oldPile1; // useless
+        oldPile1 = oldPile1->next;
+        oldPile1->previous = NULL;
+        newPile1->next = NULL;
+        newPile1->previous = NULL;
+        // First card in the pile
+    } else if ((*newPile)->previous == NULL) {
+        oldPile2 = oldPile1->next;
+        newPile1->previous = oldPile1;
+        newPile2 = newPile1;
+        newPile1 = newPile1->previous;
+        newPile1->previous = NULL;
+        newPile1->next = newPile2;
+        oldPile2-> previous = NULL;
+    } else if ((*newPile)->next == NULL){
+        oldPile2 = oldPile1->next;
+        newPile1->next = oldPile1;
+        newPile2 = newPile1->next;
+        oldPile2->previous = NULL;
+        newPile2->next = NULL;
+        newPile2->previous = newPile1;
+    } else {
+        oldPile2 = oldPile1->next;
+        newPile2 = newPile1->next;
+        newPile1->next = oldPile1;
+
+        oldPile1 = oldPile1->previous;
+        oldPile1->next = oldPile2;
+        oldPile2->previous = oldPile1;
+
+        newPile1 = newPile1->next;
+        newPile1->next = newPile2;
+        newPile2->previous = newPile1;
+
+
+
+    }
+    */
 }
+
 
 
 void play(Card** firstCard, Card** lastCard){
@@ -449,11 +511,7 @@ void play(Card** firstCard, Card** lastCard){
         if (sizes[1] < 6){
             // place cards, first card flipped
 
-            if (currentCard->previous == NULL){
-                c1 = currentCard;
-                currentCard = currentCard->next;
-
-            }
+            insertCard(c1, *firstCard)
 
             if (sizes[1] < 1){
 
@@ -479,6 +537,9 @@ void play(Card** firstCard, Card** lastCard){
 
 
 }
+/*
+ * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
+ */
 
 int main(){
     /*
