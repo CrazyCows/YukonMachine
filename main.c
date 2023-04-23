@@ -650,7 +650,7 @@ void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c
     printf("Status message: \n");
     printf("Input: \n");
 }
-/*
+
 bool checkLegalMove(Card** fromPile, Card** toPile, int from) {
 
     Card* firstCard = fromPile[0];
@@ -680,16 +680,16 @@ bool checkLegalMove(Card** fromPile, Card** toPile, int from) {
         return false;
     }
 }
- */
+
 
 // Assignment
 bool moveCards(Card** fromPile, Card** toPile, int from){
-/*
+
     if (!checkLegalMove(fromPile, toPile, from)) {
         printf("\nIllegal move!\n");
         return false;
     }
-*/
+
     // Save the card you want to move into a temp Card* - other functions use 'Card* currentCard'
     Card* temp = *fromPile;
     Card* temp2 = *toPile;
@@ -839,7 +839,7 @@ int main(){
     printf("\n The board below is the current card deck: \n");
     printCurrentBoard(c1, c2, c3, c4, c5, c6, c7);
 
-    moveCards(&c4, &c5, 2);
+    moveCards(&c4, &c5, 1);
 
 
 
