@@ -651,21 +651,55 @@ void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c
     printf("Input: \n");
 }
 
+bool checkLegalMove(Card** fromPile, Card** toPile, int from) {
 
+    Card* firstCard = fromPile[0];
+    for (int i = 0; i < from; i ++) {
+        firstCard = firstCard->next;
+    }
+
+    Card* secondCard = toPile[0];
+    while (secondCard->next != NULL) {
+        secondCard = secondCard->next;
+    }
+
+    printf("\n\n%c%c\n", firstCard->cardValue, firstCard->cardType);
+    printf("%c%c\n\n", secondCard->cardValue, secondCard->cardType);
+
+    if (firstCard->cardType == 'C' || firstCard->cardType == 'S') {
+        if (secondCard->cardType == 'D' || secondCard->cardType == 'H' || secondCard == NULL) {
+            return true;
+        }
+        return false;
+    }
+
+    if (firstCard->cardType == 'D' || firstCard->cardType == 'H') {
+        if (secondCard->cardType == 'C' || secondCard->cardType == 'S' || secondCard == NULL) {
+            return true;
+        }
+        return false;
+    }
+
+}
 
 // Assignment
-void moveCard(Card** fromPile, Card** toPile, int from){
+bool moveCards(Card** fromPile, Card** toPile, int from){
 
-    from -= 1;
+    if (!checkLegalMove(fromPile, toPile, from)) {
+        printf("\nIllegal move!\n");
+        return false;
+    }
+
     // Save the card you want to move into a temp Card* - other functions use 'Card* currentCard'
     Card* cardsToPlace = fromPile[from];
+
 
     Card* toPileEndCard = toPile[0];
     while (toPileEndCard->next != NULL){
         toPileEndCard = toPileEndCard->next;
     }
 
-    printf("\n\n%c%c\n\n", toPileEndCard->cardValue, toPileEndCard->cardType);
+    //printf("\n\n%c%c\n\n", toPileEndCard->cardValue, toPileEndCard->cardType);
 
     while (cardsToPlace != NULL) {
         Card* nextCard = cardsToPlace->next;
@@ -673,7 +707,7 @@ void moveCard(Card** fromPile, Card** toPile, int from){
         cardsToPlace->previous = toPileEndCard;
         toPileEndCard = cardsToPlace;
         cardsToPlace = nextCard;
-        fromPile = &((*fromPile)->next);
+        *fromPile = (*fromPile)->next;
     }
 
     if (fromPile[from] != NULL) {
@@ -683,14 +717,13 @@ void moveCard(Card** fromPile, Card** toPile, int from){
         fromPile[from] = NULL;
     }
 
-
-    printf("\n\n%c%c\n\n", toPileEndCard->cardValue, toPileEndCard->cardType);
-
     // Remove the card from the pile the card is coming from
 
     // Set the next pointer on the old pile to NULL
 
     // Insert the card at the end of the new pile if possible (if right color for c1-c7. for f1-f4 end pile rules apply)
+
+    return true;
 }
 
 
@@ -765,7 +798,7 @@ int main(){
     printf("\n The board below is the current card deck: \n");
     printCurrentBoard(c1, c2, c3, c4, c5, c6, c7);
 
-    moveCard(&c1, &c2, 1);
+    moveCards(&c4, &c5, 2);
 
 
 
