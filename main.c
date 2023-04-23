@@ -733,6 +733,7 @@ int main(){
         }
     }
     */
+
     printf("\n\n");
     //splitShuffle(&firstCard, &lastCard);
     play(&firstCard, &lastCard, &c1, &c2, &c3, &c4, &c5, &c6, &c7);
