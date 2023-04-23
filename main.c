@@ -412,26 +412,30 @@ void shuffle(Card** firstCard, Card** lastCard){
 
 
 /**
- *
+ * This is a helper function.
+ * The function places a card drawn from the deck into the board
+ * ***** THIS FUNCTION CAN NOT AND SHOULD NOT BE USED TO MOVE CARDS WHEN PLAYING THE GAME!!!!*******
  * @param piledToAdd The pile which a card should be added to
  * @param tempCard current card from the old pile
  */
-void insertCard(Card** newPile, Card** oldPile) {
-
-
-
+void placeCard(Card** newPile, Card** oldPile) {
     Card *cardToMove = *oldPile;
+
+    printf("%c is the thing", cardToMove->cardValue);
 
     // Remove the card from the old pile
 
     (*oldPile) = (*oldPile)->next;
     if (*oldPile != NULL){
         (*oldPile)->previous = NULL;
+    } else{
+        return;
     }
 
     cardToMove->next = NULL;
     cardToMove->previous = NULL;
 
+    // Place the card in the new pile
     if (*newPile == NULL){
         *newPile = cardToMove;
     } else {
@@ -442,6 +446,7 @@ void insertCard(Card** newPile, Card** oldPile) {
         temp->next = cardToMove;
         cardToMove->previous = temp;
     }
+
 
 // Old code - not tested
 /*
@@ -492,55 +497,120 @@ void insertCard(Card** newPile, Card** oldPile) {
 }
 
 
-
-void play(Card** firstCard, Card** lastCard){
-    // The card is split into 7 columns
-    Card* c1, c2, c3, c4, c5, c6, c7;
-    int sizes[] = {0,0, 0, 0, 0, 0, 0,};
-    // 4 additional lists is made for finished cards
-    Card* f1, f2, f3, f4;
-    Card* currentCard = *firstCard;
-
-    while (currentCard != NULL){
-        if (sizes[0] == 0){
-            c1 = currentCard;
-            currentCard = currentCard->next;
-            c1->previous = NULL;
-            c1->next = NULL;
-        }
-        if (sizes[1] < 6){
-            // place cards, first card flipped
-
-            insertCard(c1, *firstCard)
-
-            if (sizes[1] < 1){
-
-            }
-        }
-        if (sizes[2] < 7){
-            // Place cards, 2 card flipped
-        }
-        if (sizes[3] < 8){
-            // place cards, 3 card flipped
-        }
-        if (sizes[4] < 9){
-            // place cards, 4 cards flipped
-        }
-        if (sizes[5] < 10){
-            // place cards, 5 cards flipped
-        }
-        if (sizes[6] < 8){
-            // place cards, 3 cards flipped
-        }
-
+/**
+ * Function is outdated - should be removed at some point
+ * @param c1
+ * @param c2
+ * @param c3
+ * @param c4
+ * @param c5
+ * @param c6
+ * @param c7
+ * @param firstCard
+ */
+void createPlayGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7, Card** firstCard){
+    for (int i = 0; i < 10; i++){
+        placeCard(c1, firstCard);
+        printf("Doing stuff");
     }
 
+}
+
+
+/**
+ * Function for playing the game. This function tak
+ * @param firstCard
+ * @param lastCard
+ */
+void play(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7){
+
+
+    printf("%c%c\n", (*firstCard)->cardValue, (*firstCard)->cardType);
+
+    int cardsPlaced[] = {0,0,0,0,0,0,0};
+
+    //createPlayGame(c1, c2, c3, c4, c5, c6, c7, firstCard);
+
+    while (*firstCard != NULL) {
+
+        if (cardsPlaced[0] == 0) {
+            placeCard(c1, firstCard);
+            cardsPlaced[0] += 1;
+        }
+        if (cardsPlaced[1] < 6) {
+            if (cardsPlaced[1] == 0){
+                (*firstCard)->flipped = true;
+            }
+            placeCard(c2, firstCard);
+        }
+        if (cardsPlaced[2] < 7) {
+            if (cardsPlaced[2] < 2) {
+                (*firstCard)->flipped = true;
+            }
+            placeCard(c3, firstCard);
+        }
+        if (cardsPlaced[3] < 8) {
+            if (cardsPlaced[3] < 3){
+                (*firstCard)->flipped = true;
+            }
+            placeCard(c4, firstCard);
+        }
+        if (cardsPlaced[4] < 9) {
+            if ((*firstCard) == NULL){ return;}
+            if (cardsPlaced[4] < 4){
+                (*firstCard)->flipped = true;
+            }
+            placeCard(c5, firstCard);
+        }
+        if (cardsPlaced[5] < 10) {
+            if (cardsPlaced[5] < 5){
+                (*firstCard)->flipped = true;
+            }
+            placeCard(c6, firstCard);
+        }
+        if (cardsPlaced[6] < 8) {
+            if (cardsPlaced[6] < 3){
+                (*firstCard)->flipped = true;
+            }
+            placeCard(c7, firstCard);
+        }
+    }
+
+}
+
+/*
+ * Prints the board as is when played - to be done
+ */
+void printCurrentBoard(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7, Card** f1, Card** f2, Card** f3, Card** f4){
 
 }
 /*
+// Assignment
+void moveCard("Inset a way to identify from ant to piles", Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7, Card** f1, Card** f2, Card** f3, Card** f4){
+    // Save the card you want to move int a temp Card* - other functions use 'Card* currentCard'
+
+    // Remove the card from the pile the card is coming from
+
+    // Set the next pointer on the old pile to NULL
+
+    // Insert the card at the end of the new pile if possible (if right color for c1-c7. for f1-f4 end pile rules apply)
+
+
+}
+
+
+*/
+
+
+
+
+
+/*
  * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
  */
-
+/*
+ * Global values and game initiation.
+ */
 int main(){
     /*
      * Essentially we are creating an object of type Card and do stuff with it
@@ -556,14 +626,19 @@ int main(){
     printf("\n\n%d\n\n", tempint);
      */
 
-    // Declares starting address of firstCard
-    // -------- Explain why firscard must be an object of card, and why we initialize at NULL. Also explain why we want to pass the address of operate (&) to optain the pointers address.
-    // -------- Could also explain why & must be used when passing to a double-pointer fun...
+
+    /**
+     * All global data is saved here. Global data is seen as the card deck and their available spots on the board
+     */
     Card* firstCard = NULL;
     Card* lastCard = NULL;
+    // The card is split into 7 columns
+    Card* c1 = NULL; Card* c2 = NULL; Card* c3 = NULL; Card* c4 = NULL; Card* c5 = NULL; Card* c6 = NULL; Card* c7 = NULL;
+    // 4 additional lists is made for finished cards
+    Card* f1, f2, f3, f4;
     // Gives the address to createDeck. firstCard will change accordingly and will no longer be empty
     createDeck(&firstCard, &lastCard);
-    printf("%s", loadDeck(&firstCard, &lastCard, "savedDeck.txt", errorMessages));
+    //printf("%s", loadDeck(&firstCard, &lastCard, "savedDeck.txt", errorMessages));
     Card* current = firstCard;
 
     //shuffle(&firstCard, &lastCard);
@@ -573,7 +648,7 @@ int main(){
     //printf("%s\n", str);
 
     // just for testing.. Prints the current deck
-
+/*
     printf("\n");
     if (current != NULL){
         while (current != NULL){
@@ -581,9 +656,18 @@ int main(){
             current = current->next;
         }
     }
+    */
     printf("\n\n");
     //splitShuffle(&firstCard, &lastCard);
-    showCards(firstCard);
+    play(&firstCard, &lastCard, &c1, &c2, &c3, &c4, &c5, &c6, &c7);
+    //showCards(firstCard);
+
+
+    printf("\n");
+    while ((c1) != NULL){
+        printf("%c%c\n", c1->cardValue, (c1)->cardType);
+        c1 = (c1)->next;
+    }
 
 
     printf("\nCode finished succesfully(maybe not succesfully, it did finish though..)");
