@@ -427,8 +427,6 @@ void placeCard(Card** newPile, Card** oldPile) {
     (*oldPile) = (*oldPile)->next;
     if (*oldPile != NULL){
         (*oldPile)->previous = NULL;
-    } else{
-        return;
     }
 
     cardToMove->next = NULL;
@@ -575,7 +573,7 @@ void play(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Ca
             cardsPlaced[5] += 1;
         }
         if (cardsPlaced[6] < 11) {
-            if (cardsPlaced[6] < 3){
+            if (cardsPlaced[6] < 6){
                 (*firstCard)->flipped = true;
             }
             placeCard(c7, firstCard);
@@ -589,6 +587,8 @@ void play(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Ca
  * Prints the board as is when played - to be done
  */
 void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c6, Card* c7){
+    printf("C1\tC2\tC3\tC4\tC5\tC6\tC7\n\n");
+    int lineCounter = 0;
     while (c1 != NULL || c2 != NULL || c3 != NULL || c4 != NULL || c5 != NULL || c6 != NULL || c7 != NULL){
         if (c1 != NULL){
             printf("%c%c\t", c1->cardValue, c1->cardType);
@@ -632,9 +632,38 @@ void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c
         }else {
             printf("\t");
         }
+        if (lineCounter == 0){
+            printf("\tF1");
+        } else if (lineCounter == 2){
+            printf("\tF2");
+        } else if (lineCounter == 4){
+            printf("\tF3");
+        } else if (lineCounter == 6){
+            printf("\tF4");
+        }
         printf("\n");
-
+        lineCounter += 1;
     }
+    if (lineCounter < 2){
+        printf("\t\t\t\t\t\t\tF2\n");
+        printf("\t\t\t\t\t\t\tF3\n");
+        printf("\t\t\t\t\t\t\tF4\n");
+    } else if (lineCounter < 4){
+        if (lineCounter == 2){
+            printf("\n");
+        }
+        printf("\t\t\t\t\t\t\tF3\n");
+        printf("\t\t\t\t\t\t\tF4\n");
+    } else if (lineCounter < 6){
+        if (lineCounter == 4){
+            printf("\n");
+        }
+        printf("\t\t\t\t\t\t\tF4\n");
+    }
+
+
+
+
 }
 
 
@@ -716,11 +745,13 @@ int main(){
     */
     printf("\n\n");
     //splitShuffle(&firstCard, &lastCard);
+    showCards(firstCard);
     play(&firstCard, &lastCard, &c1, &c2, &c3, &c4, &c5, &c6, &c7);
-    //showCards(firstCard);
 
     printf("\n The board below is the current card deck: \n");
     printCurrentBoard(c1, c2, c3, c4, c5, c6, c7);
+
+
 
 
     printf("\nCode finished succesfully(maybe not succesfully, it did finish though..)");
