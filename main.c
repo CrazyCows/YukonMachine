@@ -421,7 +421,6 @@ void shuffle(Card** firstCard, Card** lastCard){
 void placeCard(Card** newPile, Card** oldPile) {
     Card *cardToMove = *oldPile;
 
-    printf("%c is the thing", cardToMove->cardValue);
 
     // Remove the card from the old pile
 
@@ -536,24 +535,29 @@ void play(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Ca
         if (cardsPlaced[0] == 0) {
             placeCard(c1, firstCard);
             cardsPlaced[0] += 1;
+            printf("c1 placed\n");
         }
         if (cardsPlaced[1] < 6) {
             if (cardsPlaced[1] == 0){
                 (*firstCard)->flipped = true;
             }
             placeCard(c2, firstCard);
+            cardsPlaced[1] += 1;
+            printf("c2 placed\n");
         }
         if (cardsPlaced[2] < 7) {
             if (cardsPlaced[2] < 2) {
                 (*firstCard)->flipped = true;
             }
             placeCard(c3, firstCard);
+            cardsPlaced[2] += 1;
         }
         if (cardsPlaced[3] < 8) {
             if (cardsPlaced[3] < 3){
                 (*firstCard)->flipped = true;
             }
             placeCard(c4, firstCard);
+            cardsPlaced[3] += 1;
         }
         if (cardsPlaced[4] < 9) {
             if ((*firstCard) == NULL){ return;}
@@ -561,18 +565,21 @@ void play(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Ca
                 (*firstCard)->flipped = true;
             }
             placeCard(c5, firstCard);
+            cardsPlaced[4] += 1;
         }
         if (cardsPlaced[5] < 10) {
             if (cardsPlaced[5] < 5){
                 (*firstCard)->flipped = true;
             }
             placeCard(c6, firstCard);
+            cardsPlaced[5] += 1;
         }
-        if (cardsPlaced[6] < 8) {
+        if (cardsPlaced[6] < 11) {
             if (cardsPlaced[6] < 3){
                 (*firstCard)->flipped = true;
             }
             placeCard(c7, firstCard);
+            cardsPlaced[6] += 1;
         }
     }
 
@@ -581,12 +588,62 @@ void play(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Ca
 /*
  * Prints the board as is when played - to be done
  */
-void printCurrentBoard(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7, Card** f1, Card** f2, Card** f3, Card** f4){
+void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c6, Card* c7){
+    while (c1 != NULL || c2 != NULL || c3 != NULL || c4 != NULL || c5 != NULL || c6 != NULL || c7 != NULL){
+        if (c1 != NULL){
+            printf("%c%c\t", c1->cardValue, c1->cardType);
+            c1 = c1->next;
+        } else {
+            printf("\t");
+        }
+        if (c2 != NULL){
+            printf("%c%c\t", c2->cardValue, c2->cardType);
+            c2 = c2->next;
+        }else {
+            printf("\t");
+        }
+        if (c3 != NULL){
+            printf("%c%c\t", c3->cardValue, c3->cardType);
+            c3 = c3->next;
+        }else {
+            printf("\t");
+        }
+        if (c4 != NULL){
+            printf("%c%c\t", c4->cardValue, c4->cardType);
+            c4 = c4->next;
+        }else {
+            printf("\t");
+        }
+        if (c5 != NULL){
+            printf("%c%c\t", c5->cardValue, c5->cardType);
+            c5 = c5->next;
+        }else {
+            printf("\t");
+        }
+        if (c6 != NULL){
+            printf("%c%c\t", c6->cardValue, c6->cardType);
+            c6 = c6->next;
+        }else {
+            printf("\t");
+        }
+        if (c7 != NULL){
+            printf("%c%c", c7->cardValue, c7->cardType);
+            c7 = c7->next;
+        }else {
+            printf("\t");
+        }
+        printf("\n");
 
+    }
 }
-/*
+
+
+
+
+
 // Assignment
-void moveCard("Inset a way to identify from ant to piles", Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7, Card** f1, Card** f2, Card** f3, Card** f4){
+
+void moveCard(Card** pile1, Card** pile2){
     // Save the card you want to move int a temp Card* - other functions use 'Card* currentCard'
 
     // Remove the card from the pile the card is coming from
@@ -599,7 +656,7 @@ void moveCard("Inset a way to identify from ant to piles", Card** c1, Card** c2,
 }
 
 
-*/
+
 
 
 
@@ -662,12 +719,8 @@ int main(){
     play(&firstCard, &lastCard, &c1, &c2, &c3, &c4, &c5, &c6, &c7);
     //showCards(firstCard);
 
-
-    printf("\n");
-    while ((c1) != NULL){
-        printf("%c%c\n", c1->cardValue, (c1)->cardType);
-        c1 = (c1)->next;
-    }
+    printf("\n The board below is the current card deck: \n");
+    printCurrentBoard(c1, c2, c3, c4, c5, c6, c7);
 
 
     printf("\nCode finished succesfully(maybe not succesfully, it did finish though..)");
