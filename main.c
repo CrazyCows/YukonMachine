@@ -494,24 +494,6 @@ void placeCard(Card** newPile, Card** oldPile) {
 }
 
 
-/**
- * Function is outdated - should be removed at some point
- * @param c1
- * @param c2
- * @param c3
- * @param c4
- * @param c5
- * @param c6
- * @param c7
- * @param firstCard
- */
-void createPlayGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7, Card** firstCard){
-    for (int i = 0; i < 10; i++){
-        placeCard(c1, firstCard);
-        printf("Doing stuff");
-    }
-
-}
 
 
 /**
@@ -584,7 +566,7 @@ void play(Card** firstCard, Card** lastCard, Card** c1, Card** c2, Card** c3, Ca
 }
 
 /*
- * Prints the board as is when played - to be done
+ * Prints the current board. Not much to be explained, just a bunch of if statements printing stuff.
  */
 void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c6, Card* c7){
     printf("C1\tC2\tC3\tC4\tC5\tC6\tC7\n\n");
@@ -645,6 +627,9 @@ void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c
         lineCounter += 1;
     }
     if (lineCounter < 2){
+        if (lineCounter == 1){
+            printf("\n");
+        }
         printf("\t\t\t\t\t\t\tF2\n");
         printf("\t\t\t\t\t\t\tF3\n");
         printf("\t\t\t\t\t\t\tF4\n");
