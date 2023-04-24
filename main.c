@@ -131,7 +131,7 @@ bool controlDeck(Card** firstCardTemp, Card** lastCardTemp, Card* currentCardTem
  * loadDeck is used to load a deck from a txt file. Uses ControlDeck to validate the loaded deck.
  */
 char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char *textbuf){
-    if (fileName == NULL || fileName == ""){
+    if (fileName == NULL || fileName == "" || strcmp(fileName, "\0") == 0){
         createDeck(firstCard, lastCard);
         return "OK, deck created";
     }
@@ -495,7 +495,6 @@ void placeCard(Card** newPile, Card** oldPile) {
 
 
 
-
 /**
  * Function for playing the game. This function tak
  * @param firstCard
@@ -779,13 +778,54 @@ bool moveCards(Card** fromPile, Card** toPile, int from, bool endPile){
 }
 
 
+void startMenu(Card** firstCard, Card** lastCard,char* textBuf){
+    char input[4]; //Allocates the space fo the string
+    char filename[128];
+    char c;
+    int i = 0;
 
+    while (true){
+        printf("What would you like to do? \nLD <filename> \nSW \nSI<split> \nSR \nSD <filepath> \nP \nQQ (quit)\n");
+        scanf("%c%c", &input[0], &input[1]);
 
-void startMenu(){
+        if ((strcmp(input,"LD")) == 0){ //strcmp returns 0 if theyre the same.
+            printf("Input file path: (leave empty if you want to start a new game)");
+            getchar();
+            while ((c = getchar()) != '\n' && i < sizeof(filename) - 1){
+                filename[i++] = c;
+                printf("%c", c);
+            }
+            printf("\n");
+            printf("%s", loadDeck(firstCard, lastCard, filename, textBuf));
+
+            printf("\n");
+
+        }
+        else if ((strcmp(input,"SW")) == 0){ //strcmp returns 0 if theyre the same.
+            showCards(*firstCard);
+        }
+        else if ((strcmp(input,"SI")) == 0){ //strcmp returns 0 if theyre the same.
+            printf("s");
+        }
+        else if ((strcmp(input,"SR")) == 0){ //strcmp returns 0 if theyre the same.
+            printf("s");
+        }
+        else if ((strcmp(input,"SD")) == 0){ //strcmp returns 0 if theyre the same.
+            printf("s");
+        }
+        else if ((strcmp(input,"P")) == 0){ //strcmp returns 0 if theyre the same.
+            printf("s");
+        }
+        else if ((strcmp(input,"QQ")) == 0){ //strcmp returns 0 if theyre the same.
+            printf("s");
+            exit(0);
+        }
+        else{
+            printf("Wrong command");
+        }
+    }
 
 }
-
-
 
 /*
  * ******** IGNORE ALL TEXT IN THIS CLASS, IT IS (probably) NOT VALID! ********************
@@ -840,7 +880,7 @@ int main(){
     }
     */
 
-
+/*
     printf("\n\n");
     //splitShuffle(&firstCard, &lastCard);
     showCards(firstCard);
@@ -855,9 +895,9 @@ int main(){
 
 
     printCurrentBoard(c1, c2, c3, c4, c5, c6, c7);
-
-
-
+*/
+    //printf("%s", loadDeck(&firstCard,&lastCard,"",errorMessages));
+    startMenu(&firstCard, &lastCard, errorMessages);
     printf("\nCode finished succesfully(maybe not succesfully, it did finish though..)");
     return 1;
 }
