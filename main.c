@@ -786,6 +786,7 @@ void startMenu(Card** firstCard, Card** lastCard, char* textBuf){
     char input[4]; //Allocates the space fo the string
     char filename[128];
     char c;
+    char saveChar;
     int i = 0;
 
     while (true){
@@ -823,10 +824,18 @@ void startMenu(Card** firstCard, Card** lastCard, char* textBuf){
             printf("s");
         }
         else if ((strcmp(input,"SR")) == 0){ //strcmp returns 0 if theyre the same.
-            printf("s");
+            shuffle(firstCard,lastCard); //Should work..?
         }
         else if ((strcmp(input,"SD")) == 0){ //strcmp returns 0 if theyre the same.
-            printf("s");
+            printf("Input desired file name: ");
+            char saveFileName[128];
+            getchar();
+            while ((saveChar = getchar()) != '\n' && i < sizeof(saveFileName) - 1){
+                saveFileName[i++] = saveChar;
+                printf("%c", saveChar);
+            }
+            saveDeck(*firstCard,saveFileName); //Tjek lige om det der pointer noget fungerer
+
         }
         else if ((strcmp(input,"P")) == 0){ //strcmp returns 0 if theyre the same.
             printf("s");
