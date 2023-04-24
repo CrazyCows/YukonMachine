@@ -251,18 +251,22 @@ void showCards(Card* firstCard){
 }
 
 // Splitshuffle according to assignemnet. Lots of pointer stuff -_-
-void splitShuffle(Card** firstCard, Card** lastCard){
+void splitShuffle(Card** firstCard, Card** lastCard, int split){
     Card* currentCard = *firstCard;
+    int randomNumber;
     // Creates a random number. rand() in c must be provided a seed, otherwise the same random sequence will happen everytime, and as such very quickly become predictable
     // Using the current time as seed.
-    time_t currentTime = time(NULL);
-    srand(currentTime);
-    int randomNumber = rand() % (52 - 1 + 1) + 1;
-    randomNumber = 13;
-    for (int i = 1; i <= randomNumber; i++){
-        currentCard = currentCard->next;
+    if (split == 0) {
+        time_t currentTime = time(NULL);
+        srand(currentTime);
+        randomNumber = rand() % (52 - 1 + 1) + 1;
+    } else {
+        randomNumber = split;
     }
 
+    for (int i = 1; i <= randomNumber; i++) {
+        currentCard = currentCard->next;
+    }
     // Creates the piles
     Card* pile1 = *firstCard;
     Card* pile2 = currentCard->next;
@@ -778,7 +782,7 @@ bool moveCards(Card** fromPile, Card** toPile, int from, bool endPile){
 }
 
 
-void startMenu(Card** firstCard, Card** lastCard,char* textBuf){
+void startMenu(Card** firstCard, Card** lastCard, char* textBuf){
     char input[4]; //Allocates the space fo the string
     char filename[128];
     char c;
@@ -805,6 +809,17 @@ void startMenu(Card** firstCard, Card** lastCard,char* textBuf){
             showCards(*firstCard);
         }
         else if ((strcmp(input,"SI")) == 0){ //strcmp returns 0 if theyre the same.
+            int chosenCard;
+
+            if( scanf("%d", &chosenCard);
+            if (chosenCard == NULL){
+                chosenCard = 0;
+            } else {
+                chosenCard -= 1;
+            }
+
+
+            splitShuffle(firstCard, lastCard, chosenCard);
             printf("s");
         }
         else if ((strcmp(input,"SR")) == 0){ //strcmp returns 0 if theyre the same.
