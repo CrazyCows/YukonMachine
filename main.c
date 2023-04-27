@@ -547,7 +547,7 @@ void placeCard(Card** newPile, Card** oldPile) {
 /*
  * Prints the current board. Not much to be explained, just a bunch of if statements printing stuff.
  */
-void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c6, Card* c7, Card* f1, Card* f2, Card* f3, Card* f4){
+void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c6, Card* c7, Card* f1, Card* f2, Card* f3, Card* f4, char* message){
     printf("C1\tC2\tC3\tC4\tC5\tC6\tC7\n\n");
     int lineCounter = 0;
 
@@ -695,7 +695,7 @@ void printCurrentBoard(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5, Card* c
     }
 
     printf("\n");
-    printf("Status message: \n");
+    printf("Status message: %s\n", message);
     printf("Input: ");
 }
 
@@ -813,28 +813,68 @@ bool checkLegalMove2(Card** fromPile, Card** toPile, int from){
 
 
 // Assignment
+
 bool moveCards(Card** fromPile, Card** toPile, int from, bool endPile){
+    printf("%d", from);
     Card* temp = *fromPile;
     Card* temp2 = *toPile;
-    for (int i = 0; i < from; i ++) {
+    printf("\n\n%c%c <<<\n\n", temp->cardValue, temp->cardType);
+    printf("Crash1");
+    while ((*fromPile)->next != NULL) {
+        printf("Crash1.1");
         (*fromPile) = (*fromPile)->next;
     }
-    while ((*toPile)->next != NULL) {
-        (*toPile) = (*toPile)->next;
+    printf("mamma im doing good\n");
+    for (int i = 0; i < from; i ++) {
+        printf("Crash1.2");
+        (*fromPile) = (*fromPile)->previous;
+    }
+    printf("mamma im doing goodv2\n");
+    if ((*toPile) != NULL) {
+        while ((*toPile)->next != NULL) {
+            printf("Crash1.3");
+            (*toPile) = (*toPile)->next;
+        }
     }
 
-    if (*fromPile == NULL || *toPile == NULL){
+
+    printf("mamma im doing goodv3\n");
+
+
+    if (*fromPile == NULL){
+        printf("mamma im doing goodv3.5\n");
+        *fromPile = temp;
+        *toPile = temp2;
+        printf("CRASHAND DIE");
+        return false;
+    }
+
+    printf("mamma im doing goodv4\n");
+
+    if ((*fromPile)->flipped == true){
         *fromPile = temp;
         *toPile = temp2;
         return false;
     }
 
-    if ((*fromPile)->flipped){
-        *fromPile = temp;
-        *toPile = temp2;
-        return false;
+    printf("mamma im doing goodv5\n");
+    if ((*toPile) == NULL){
+        if (checkLegalMove2(fromPile, toPile, from) == true){
+            printf("mamma im doing goodv6\n");
+            *toPile = *fromPile;
+            (*fromPile)->previous = *fromPile;
+            (*fromPile)->next = NULL;
+            printf("mamma im doing goodv7\n");
+            (*toPile)->next = NULL;
+            (*toPile)->previous = NULL;
+            *fromPile = temp;
+            printf("mamma im doing goodv8\n");
+            printf("all done");
+            return true;
+        }
     }
 
+/*
     if (!endPile) {
         if (!checkLegalMove(fromPile, toPile, from)) {
             printf("\nIllegal move!\n");
@@ -850,22 +890,28 @@ bool moveCards(Card** fromPile, Card** toPile, int from, bool endPile){
             return false;
         }
     }
+    */
 
     Card* oldPile = *fromPile;
     Card* newPile = *toPile;
 
-    printf("\n\n%c%c\n\n", (*toPile)->cardValue, (*toPile)->cardType);
+    printf("\n\n%c%c <<<\n\n", (*toPile)->cardValue, (*toPile)->cardType);
+    printf("\n\n%c%c <<<\n\n", (*fromPile)->cardValue, (*fromPile)->cardType);
 
     Card* cardToMove = oldPile;
-
+    ////////////////////////////////////////
+    // Wrong pile is moved, fix me ////////////////
+    //////////////////////////////////////////////
     oldPile = oldPile->previous;
+    oldPile->flipped = false;
     oldPile->next = NULL;
 
     newPile->next = cardToMove;
 
+
+
     *fromPile = temp;
     *toPile = temp2;
-
 
     return true;
 }
@@ -875,9 +921,12 @@ void checkForValidInputMove(char* usrInput){
 }
 
 void playGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7, Card** f1, Card** f2, Card** f3, Card** f4){
-    printCurrentBoard(*c1, *c2, *c3, *c4, *c5, *c6, *c7, NULL, NULL, NULL, NULL);
+    printCurrentBoard(*c1, *c2, *c3, *c4, *c5, *c6, *c7, NULL, NULL, NULL, NULL, "Welcome!");
     char usrInput[256];
     bool moveByColumn;
+    Card **chosenDeck1;
+    Card **chosenDeck2;
+    char messages[256];
     while (true) {
         while (true) {
 
@@ -888,6 +937,7 @@ void playGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, 
             if (usrInput[0] == 'Q'){
                 return;
             }
+
             if (usrInput[2] == ':' && usrInput[5] == '-' && usrInput[6] == '>') {
                 printf("\nAt first line\n");
                 if (!(usrInput[0] == 'C' || usrInput[0] == 'F')) {
@@ -898,8 +948,8 @@ void playGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, 
                     printf("no good input2: ");
                     memset(usrInput, '\0', 256);
 
-                } else if (!((usrInput[3] >= '1' && usrInput[3] <= '9') || usrInput[3] == 'A' || usrInput[3] == 'J' ||
-                             usrInput[3] == 'Q' || usrInput[3] == 'K')) {
+                } else if (!(usrInput[3] >= '1' && usrInput[3] <= '9') || usrInput[3] == 'A' || usrInput[3] == 'J' ||
+                             usrInput[3] == 'Q' || usrInput[3] == 'K') {
                     printf("no good input3: ");
                     memset(usrInput, '\0', 256);
 
@@ -922,18 +972,18 @@ void playGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, 
             else if (usrInput[2] == '-' && usrInput[3] == '>'){
                 printf("\nAt second line\n");
                 if (!(usrInput[0] == 'C' || usrInput[0] == 'F')) {
-                    printf("no good input1: %c", usrInput[0]);
+                    printf("no good input7: %c", usrInput[0]);
                     memset(usrInput, '\0', 256); // Resets the array
 
                 } else if (!(usrInput[1] >= '1' && usrInput[1] <= '7')) {
-                    printf("no good input2: ");
+                    printf("no good input8: ");
                     memset(usrInput, '\0', 256);
 
                 } else if (!(usrInput[4] == 'C' || usrInput[4] == 'F')){
-                    printf("no good input3: ");
+                    printf("no good input9: ");
                     memset(usrInput, '\0', 256);
                 } else if(!(usrInput[5] >= '1' && usrInput[5] <= '7')){
-                    printf("no good input4: ");
+                    printf("no good input10: ");
                     memset(usrInput, '\0', 256);
                 }
                 else {
@@ -944,17 +994,161 @@ void playGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, 
             }
         }
 
-        if (moveByColumn == true){
+        //////// Start of checks for mving columns aka moveByColumn == true /////////////
+        if (moveByColumn == true) {
+            if (usrInput[0] == 'C') {
+                if (usrInput[1] == '1') {
+                    chosenDeck1 = c1;
+                } else if (usrInput[1] == '2') {
+                    chosenDeck1 = c2;
+                } else if (usrInput[1] == '3') {
+                    chosenDeck1 = c3;
+                } else if (usrInput[1] == '4') {
+                    chosenDeck1 = c4;
+                } else if (usrInput[1] == '5') {
+                    chosenDeck1 = c5;
+                } else if (usrInput[1] == '6') {
+                    chosenDeck1 = c6;
+                } else if (usrInput[1] == '7') {
+                    chosenDeck1 = c7;
+                }
+            }
 
+            if (usrInput[0] == 'C') {
+                if (usrInput[8] == '1') {
+                    chosenDeck2 = c1;
+                } else if (usrInput[5] == '1') {
+                    chosenDeck2 = c1;
+                } else if (usrInput[5] == '2') {
+                    chosenDeck2 = c2;
+                } else if (usrInput[5] == '3') {
+                    chosenDeck2 = c3;
+                } else if (usrInput[5] == '4') {
+                    chosenDeck2 = c4;
+                } else if (usrInput[5] == '5') {
+                    chosenDeck2 = c5;
+                } else if (usrInput[5] == '6') {
+                    chosenDeck2 = c6;
+                } else if (usrInput[5] == '7') {
+                    chosenDeck2 = c7;
+                }
+            }
+
+            if (usrInput[0] == 'F') {
+                if (usrInput[1] == '1') {
+                    chosenDeck2 = f1;
+                } else if (usrInput[1] == '2') {
+                    chosenDeck2 = f2;
+                } else if (usrInput[1] == '3') {
+                    chosenDeck2 = f3;
+                } else if (usrInput[1] == '4') {
+                    chosenDeck2 = f4;
+                }
+            }
+
+            if (usrInput[4] == 'F') {
+                if (usrInput[5] == '1') {
+                    chosenDeck2 = f1;
+                } else if (usrInput[5] == '2') {
+                    chosenDeck2 = f2;
+                } else if (usrInput[5] == '3') {
+                    chosenDeck2 = f3;
+                } else if (usrInput[5] == '4') {
+                    chosenDeck2 = f4;
+                }
+            }
+            moveCards(chosenDeck1, chosenDeck2, 0, false);
+        }
+        //////// End of checks for moving columns /////////////
+
+        //////// Start of checks for moving card at x row ////////
+        else {
+            if (usrInput[0] == 'C') {
+                if (usrInput[1] == '1') {
+                    chosenDeck1 = c1;
+                } else if (usrInput[1] == '2') {
+                    chosenDeck1 = c2;
+                } else if (usrInput[1] == '3') {
+                    chosenDeck1 = c3;
+                } else if (usrInput[1] == '4') {
+                    chosenDeck1 = c4;
+                } else if (usrInput[1] == '5') {
+                    chosenDeck1 = c5;
+                } else if (usrInput[1] == '6') {
+                    chosenDeck1 = c6;
+                } else if (usrInput[1] == '7') {
+                    chosenDeck1 = c7;
+                }
+            }
+
+            if (usrInput[7] == 'C') {
+                if (usrInput[8] == '1') {
+                    chosenDeck2 = c1;
+                } else if (usrInput[8] == '2') {
+                    chosenDeck2 = c2;
+                } else if (usrInput[8] == '3') {
+                    chosenDeck2 = c3;
+                } else if (usrInput[8] == '4') {
+                    chosenDeck2 = c4;
+                } else if (usrInput[8] == '5') {
+                    chosenDeck2 = c5;
+                } else if (usrInput[8] == '6') {
+                    chosenDeck2 = c6;
+                } else if (usrInput[8] == '7') {
+                    chosenDeck2 = c7;
+                }
+            }
+
+            if (usrInput[0] == 'F') {
+                if (usrInput[1] == '1') {
+                    chosenDeck2 = f1;
+                } else if (usrInput[1] == '2') {
+                    chosenDeck2 = f2;
+                } else if (usrInput[1] == '3') {
+                    chosenDeck2 = f3;
+                } else if (usrInput[1] == '4') {
+                    chosenDeck2 = f4;
+                }
+            }
+
+            if (usrInput[7] == 'F') {
+                if (usrInput[8] == '1') {
+                    chosenDeck2 = f1;
+                } else if (usrInput[8] == '2') {
+                    chosenDeck2 = f2;
+                } else if (usrInput[8] == '3') {
+                    chosenDeck2 = f3;
+                } else if (usrInput[8] == '4') {
+                    chosenDeck2 = f4;
+                }
+            }
+
+            Card* temp = *chosenDeck1;
+            int height = 0;
+            bool cardInColumn = false;
+            while (*chosenDeck1 != NULL){
+
+                if ((*chosenDeck1)->cardValue == usrInput[3] && (*chosenDeck1)->cardType == usrInput[4]){
+                    strcpy(messages, "Movement succesful!");
+                    *chosenDeck1 = temp;
+                    cardInColumn = true;
+                    if(moveCards(chosenDeck1, chosenDeck2, height, false) == true) {
+                        break;
+                    } else {
+                        strcpy(messages, "No cards in pile or invalid move");
+                    }
+                }
+                (*chosenDeck1) = (*chosenDeck1)->next;
+                if (*chosenDeck1 == NULL){
+                    strcpy(messages, "Card does not exists");
+                    printf("Card does not exists ");
+                }
+                height++;
+            }
         }
 
-
-
-
-
-
-
-
+        printf("\n\n%c%c\n\n", (*chosenDeck1)->cardValue, (*chosenDeck2)->cardValue);
+        printCurrentBoard(*c1, *c2, *c3, *c4, *c5, *c6, *c7, NULL, NULL, NULL, NULL, messages);
 
 
 
