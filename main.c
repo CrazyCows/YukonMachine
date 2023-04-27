@@ -877,31 +877,75 @@ void checkForValidInputMove(char* usrInput){
 void playGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, Card** c7, Card** f1, Card** f2, Card** f3, Card** f4){
     printCurrentBoard(*c1, *c2, *c3, *c4, *c5, *c6, *c7, NULL, NULL, NULL, NULL);
     char usrInput[256];
-
+    bool moveByColumn;
     while (true) {
         while (true) {
+
+            fflush(stdin); // Clears input buffer
+            memset(usrInput, '\0', 256); // Clears the input array
             scanf("%s", &usrInput[0]);
-            getchar();
-            if (!((usrInput[0] >= '1' && usrInput[0] <= '9') || usrInput[0] == 'A' || usrInput[0] == 'J' ||
-                  usrInput[0] == 'Q' || usrInput[0] == 'K')) {
-                printf("no good input1: %c", usrInput[0]);
-                memset(usrInput, '\0', 256);
 
-            } else if (!((usrInput[3] >= '1' && usrInput[3] <= '9') || usrInput[3] == 'A' || usrInput[3] == 'J' ||
-                         usrInput[3] == 'Q' || usrInput[3] == 'K')) {
-                printf("no good input2: ");
-                memset(usrInput, '\0', 256);
-
-            } else if (!(usrInput[1] == 'C' || usrInput[1] == 'S' || usrInput[1] == 'H' || usrInput[1] == 'D')) {
-                printf("no good input3: ");
-                memset(usrInput, '\0', 256);
-
-            } else if (!(usrInput[4] == 'C' || usrInput[4] == 'S' || usrInput[4] == 'H' || usrInput[4] == 'D')) {
-                printf("no good input4: ");
-                memset(usrInput, '\0', 256);
-            } else {
-                break;
+            if (usrInput[0] == 'Q'){
+                return;
             }
+            if (usrInput[2] == ':' && usrInput[5] == '-' && usrInput[6] == '>') {
+                printf("\nAt first line\n");
+                if (!(usrInput[0] == 'C' || usrInput[0] == 'F')) {
+                    printf("no good input1: %c", usrInput[0]);
+                    memset(usrInput, '\0', 256); // Resets the array
+
+                } else if (!(usrInput[1] >= '1' && usrInput[1] <= '7')) {
+                    printf("no good input2: ");
+                    memset(usrInput, '\0', 256);
+
+                } else if (!((usrInput[3] >= '1' && usrInput[3] <= '9') || usrInput[3] == 'A' || usrInput[3] == 'J' ||
+                             usrInput[3] == 'Q' || usrInput[3] == 'K')) {
+                    printf("no good input3: ");
+                    memset(usrInput, '\0', 256);
+
+                } else if (!(usrInput[4] == 'C' || usrInput[4] == 'S' || usrInput[4] == 'H' || usrInput[4] == 'D')){
+                    printf("no good input4: ");
+                    memset(usrInput, '\0', 256);
+                } else if (!(usrInput[0] == 'C' || usrInput[0] == 'F')){
+                    printf("no good input5: ");
+                    memset(usrInput, '\0', 256);
+                } else if(!(usrInput[1] >= '1' && usrInput[1] <= '7')){
+                    printf("no good input6: ");
+                    memset(usrInput, '\0', 256);
+                }
+                else {
+                    printf("BREAK1");
+                    moveByColumn = false;
+                    break;
+                }
+            }
+            else if (usrInput[2] == '-' && usrInput[3] == '>'){
+                printf("\nAt second line\n");
+                if (!(usrInput[0] == 'C' || usrInput[0] == 'F')) {
+                    printf("no good input1: %c", usrInput[0]);
+                    memset(usrInput, '\0', 256); // Resets the array
+
+                } else if (!(usrInput[1] >= '1' && usrInput[1] <= '7')) {
+                    printf("no good input2: ");
+                    memset(usrInput, '\0', 256);
+
+                } else if (!(usrInput[4] == 'C' || usrInput[4] == 'F')){
+                    printf("no good input3: ");
+                    memset(usrInput, '\0', 256);
+                } else if(!(usrInput[5] >= '1' && usrInput[5] <= '7')){
+                    printf("no good input4: ");
+                    memset(usrInput, '\0', 256);
+                }
+                else {
+                    moveByColumn = true;
+                    printf("BREAK2");
+                    break;
+                }
+            }
+        }
+
+        if (moveByColumn == true){
+
         }
 
 
@@ -911,6 +955,10 @@ void playGame(Card** c1, Card** c2, Card** c3, Card** c4, Card** c5, Card** c6, 
 
 
 
+
+
+
+        memset(usrInput, '\0', 256); // Resets the array
         printf("Input is great§!");
     }
 
