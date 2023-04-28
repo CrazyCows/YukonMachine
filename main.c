@@ -796,6 +796,11 @@ bool checkLegalMove(Card** fromPile, Card** toPile, int from) {
 }
 
 bool checkLegalMove2(Card** fromPile, Card** toPile, int from){
+
+    if ((*toPile) == NULL){
+        return true;
+    }
+
     Card* firstCard = fromPile[0];
     Card* secondCard = toPile[0];
 
@@ -874,7 +879,7 @@ bool moveCards(Card** fromPile, Card** toPile, int from, bool endPile){
         }
     }
 
-/*
+
     if (!endPile) {
         if (!checkLegalMove(fromPile, toPile, from)) {
             printf("\nIllegal move!\n");
@@ -890,7 +895,7 @@ bool moveCards(Card** fromPile, Card** toPile, int from, bool endPile){
             return false;
         }
     }
-    */
+
 
     Card* oldPile = *fromPile;
     Card* newPile = *toPile;
