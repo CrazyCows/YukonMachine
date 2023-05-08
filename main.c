@@ -236,8 +236,6 @@ char *saveDeck(Card* firstCard, const char *savedDeckName){
     // If the current card is null, the linked list must be at the very end
     while (currentCard != NULL){
 
-
-
         // Prints the card values to the file
         fprintf(file, "%c%c\n", currentCard->cardValue, currentCard->cardType);
         // sets current card to the next card
@@ -1169,15 +1167,18 @@ void startMenu(Card** firstCard, Card** lastCard, char* textBuf){
     Card* c1 = NULL; Card* c2 = NULL; Card* c3 = NULL; Card* c4 = NULL; Card* c5 = NULL; Card* c6 = NULL; Card* c7 = NULL;
     // 4 additional lists is made for finished cards
     Card* f1 = NULL; Card* f2 = NULL; Card* f3 = NULL; Card* f4 = NULL;
-    ///// Program breaks if more than 128 chars is inputted. It will override memory.
+    // ///// Program breaks if more than 128 chars is inputted. It will override memory.
     char input[128]; //Allocates the space fo the string
     char filename[128];
     char usrInput;
     char saveChar;
 
+
+
     while (true){
         int i = 0;
         printf("What would you like to do? \nLD <filename> \nSW \nSI<split> \nSR \nSD <filepath> \nP \nQQ (quit)\n");
+        //fflush(stdout);
         // --- Can break the
         scanf("%s", &input[0]); // Scanf leaves behind a newline in the buffer, as it stops reading when it reaches a new line
         // handles Load
@@ -1241,7 +1242,7 @@ void startMenu(Card** firstCard, Card** lastCard, char* textBuf){
             getchar();
             while ((saveChar =(char) getchar()) != '\n' && i < sizeof(saveFileName) - 1){
                 saveFileName[i++] = saveChar;
-                printf("%usrInput", saveChar);
+                printf("%c", saveChar);
             }
             saveDeck(*firstCard,saveFileName); //Tjek lige om det der pointer noget fungerer
         }
@@ -1273,6 +1274,7 @@ int main(){
     /*
      * Essentially we are creating an object of type Card and do stuff with it
      */
+    setbuf(stdout,NULL); //For debugging, see: https://github.com/microsoft/vscode-cpptools/issues/3953
 
 
     //As far as I can tell these 5 lines do literally nothing.
