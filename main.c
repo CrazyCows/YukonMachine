@@ -1256,7 +1256,7 @@ void startMenu(Card** firstCard, Card** lastCard, char* textBuf){
             exit(0);
         }
         else{
-            printf("Wrong command");
+            printf("Wrong command ");
         }
     }
 
