@@ -134,7 +134,7 @@ void removeDeck(Card** firstCard){
     while (temp != NULL){
         temp = (*firstCard)->next;
         free(*firstCard);
-        printf("im also doing this");
+        printf(" removed one card and freed memory \n");
         (*firstCard) = temp;
     }
 }
@@ -174,7 +174,7 @@ char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char *te
     char temp[4];
     for (int i = 1; i <= 52; i++){
 
-        printf("\n\ncrashing\n\n");
+        //printf("\n\ncrashing\n\n"); //IDK Why this is printed
         // fgets reads a line from a txt file and saves it in temp. The int defines the max-count of chars on a line. Is set to 4 as it also includes \n
         fgets(temp, 4, file);
         // Resets the currentCardTemp to start at the fron every loop
@@ -1242,8 +1242,9 @@ void startMenu(Card** firstCard, Card** lastCard, char* textBuf){
             getchar();
             while ((saveChar =(char) getchar()) != '\n' && i < sizeof(saveFileName) - 1){
                 saveFileName[i++] = saveChar;
-                printf("%c", saveChar);
+                printf("%c", saveChar); //Printing this is a bit over the top, given how we are already echoing input.
             }
+            printf("%c", '\n');
             saveDeck(*firstCard,saveFileName); //Tjek lige om det der pointer noget fungerer
         }
         // "Play" - starts the game
@@ -1343,6 +1344,6 @@ int main(){
     //printf("%s", loadDeck(&firstCard,&lastCard,"",errorMessages));
     startMenu(&firstCard, &lastCard, errorMessages);
     printf("\nCode finished succesfully(maybe not succesfully, it did finish though..)");
-    return 1;
+    return 0;
 }
 
