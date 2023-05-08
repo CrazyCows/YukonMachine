@@ -1269,15 +1269,19 @@ void startMenu(Card** firstCard, Card** lastCard, char* textBuf){
  * Global values and game initiation.
  */
 int main(){
+
     /*
      * Essentially we are creating an object of type Card and do stuff with it
      */
+
+
+    //As far as I can tell these 5 lines do literally nothing.
     int j = 0;
     char chars = '2';
     chars = (char) ((j+97));
     printf("%c", chars);
-
     printf("\n\n");
+
 
     char errorMessages[100];
 
