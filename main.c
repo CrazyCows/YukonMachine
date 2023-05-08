@@ -164,7 +164,7 @@ char *loadDeck(Card** firstCard, Card** lastCard, const char *fileName, char *te
         removeDeck(firstCard);
     }
 
-    printf("File not NULL");
+    printf("File not NULL\n");
     // Creates a linked list containing all 52 cards. Is used to check against the imported card deck.
     Card* firstCardTemp = NULL;
     Card* lastCardTemp = NULL;
@@ -454,7 +454,7 @@ void shuffle(Card** firstCard, Card** lastCard){
         pile2 = pile2->next;
     }
     *lastCard = pile2;
-    printf("noise");
+    printf("Cards have been shuffled \n");
 
 
 }
